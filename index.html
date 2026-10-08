@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaAI — Intelligent Language Translator</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+
+  <!-- ═══ 3D CANVAS (Three.js) ═══ -->
+  <canvas id="threeCanvas"></canvas>
+
+  <!-- ═══ PAGE LOADER ═══ -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-inner">
+      <div class="loader-logo">Lingua<span>AI</span></div>
+      <div class="loader-bar">
+        <div class="loader-fill" id="loaderFill"></div>
+      </div>
+      <div class="loader-text" id="loaderText">Initializing AI Engine…</div>
+    </div>
+  </div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <div class="brand-orb"></div>
+        <span class="brand-name">Lingua<span class="brand-accent">AI</span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#translator" class="nav-link">Translate</a>
+        <a href="#features" class="nav-link">Features</a>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-theme" id="themeToggle"><i class="fas fa-moon" id="themeIcon"></i></button>
+        <button class="btn-nav-cta glow-btn">Get Started Free</button>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#translator" class="mobile-link">Translate</a>
+      <a href="#features" class="mobile-link">Features</a>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="home">
+    <div class="hero-content reveal-up">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Powered by Claude AI &nbsp;·&nbsp; 100+ Languages &nbsp;·&nbsp; Real-time
+      </div>
+      <h1 class="hero-title">
+        Break Every<br />
+        <span class="hero-gradient-text" id="typingText"></span>
+      </h1>
+      <p class="hero-subtitle">
+        AI translation that understands context, tone, and cultural nuance — not just words. Speak, type, or upload. Get
+        perfect translations instantly.
+      </p>
+      <div class="hero-actions">
+        <a href="#translator" class="btn-primary magnetic">
+          <span><i class="fas fa-bolt"></i> Start Translating Free</span>
+          <div class="btn-shine"></div>
+        </a>
+        <a href="#features" class="btn-ghost magnetic">
+          Watch Demo <i class="fas fa-play-circle"></i>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="100">0</span><span class="stat-suffix">+</span>
+          <span class="stat-label">Languages</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="99">0</span><span class="stat-suffix">%</span>
+          <span class="stat-label">Accuracy</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="2">0</span><span class="stat-suffix">M+</span>
+          <span class="stat-label">Translations</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="50">0</span><span class="stat-suffix">ms</span>
+          <span class="stat-label">Response</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D Globe Visual -->
+    <div class="hero-3d" id="hero3d">
+      <div class="globe-wrap">
+        <div class="globe-3d">
+          <div class="globe-face f1"></div>
+          <div class="globe-face f2"></div>
+          <div class="globe-face f3"></div>
+          <div class="globe-face f4"></div>
+          <div class="globe-face f5"></div>
+          <div class="globe-face f6"></div>
+        </div>
+        <div class="orbit o1">
+          <div class="orbit-dot"></div>
+        </div>
+        <div class="orbit o2">
+          <div class="orbit-dot"></div>
+        </div>
+        <div class="orbit o3">
+          <div class="orbit-dot"></div>
+        </div>
+        <div class="lang-chip lc1">🇬🇧 EN</div>
+        <div class="lang-chip lc2">🇯🇵 JA</div>
+        <div class="lang-chip lc3">🇩🇪 DE</div>
+        <div class="lang-chip lc4">🇸🇦 AR</div>
+        <div class="lang-chip lc5">🇷🇺 RU</div>
+        <div class="lang-chip lc6">🇨🇳 ZH</div>
+        <div class="lang-chip lc7">🇪🇸 ES</div>
+        <div class="lang-chip lc8">🇫🇷 FR</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Arabic · العربية</span><span>•</span>
+      <span>Chinese · 中文</span><span>•</span>
+      <span>French · Français</span><span>•</span>
+      <span>German · Deutsch</span><span>•</span>
+      <span>Hindi · हिन्दी</span><span>•</span>
+      <span>Japanese · 日本語</span><span>•</span>
+      <span>Korean · 한국어</span><span>•</span>
+      <span>Portuguese · Português</span><span>•</span>
+      <span>Russian · Русский</span><span>•</span>
+      <span>Spanish · Español</span><span>•</span>
+      <span>Turkish · Türkçe</span><span>•</span>
+      <span>Urdu · اردو</span><span>•</span>
+      <span>Arabic · العربية</span><span>•</span>
+      <span>Chinese · 中文</span><span>•</span>
+      <span>French · Français</span><span>•</span>
+      <span>German · Deutsch</span><span>•</span>
+      <span>Hindi · हिन्दी</span><span>•</span>
+      <span>Japanese · 日本語</span><span>•</span>
+      <span>Korean · 한국어</span><span>•</span>
+      <span>Portuguese · Português</span><span>•</span>
+    </div>
+  </div>
+
+  <!-- ═══ TRANSLATOR ═══ -->
+  <section class="translator-section section-pad" id="translator">
+    <div class="section-label reveal-up">Core Engine</div>
+    <h2 class="section-title reveal-up">AI Translation Engine</h2>
+    <p class="section-sub reveal-up">Type, speak, or upload — get accurate, context-aware translation with cultural
+      insight.</p>
+
+    <div class="translator-card reveal-up" id="translatorCard">
+      <div class="card-glow"></div>
+
+      <!-- Top Bar -->
+      <div class="translator-topbar">
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="text"><i class="fas fa-font"></i> Text</button>
+          <button class="mode-tab" data-mode="voice"><i class="fas fa-microphone"></i> Voice</button>
+          <button class="mode-tab" data-mode="file"><i class="fas fa-file-alt"></i> File</button>
+          <button class="mode-tab" data-mode="compare"><i class="fas fa-code-branch"></i> Compare</button>
+        </div>
+        <div class="topbar-right">
+          <label class="auto-toggle-label">
+            <span>Auto-Translate</span>
+            <input type="checkbox" id="autoTranslate" class="toggle-input" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+          <div class="tone-select-wrap">
+            <label><i class="fas fa-sliders-h"></i></label>
+            <select id="toneSelect" class="tone-select">
+              <option value="neutral">Neutral</option>
+              <option value="formal">Formal</option>
+              <option value="casual">Casual</option>
+              <option value="literary">Literary</option>
+              <option value="technical">Technical</option>
+              <option value="humorous">Humorous</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lang Bar -->
+      <div class="lang-bar">
+        <div class="lang-side">
+          <select id="sourceLang" class="lang-select"></select>
+          <span class="detected-badge" id="detectedLang"></span>
+        </div>
+        <button class="swap-btn 3d-btn" id="swapBtn" title="Swap">
+          <i class="fas fa-right-left"></i>
+        </button>
+        <div class="lang-side lang-side-right">
+          <select id="targetLang" class="lang-select"></select>
+        </div>
+      </div>
+
+      <!-- Panels -->
+      <div class="panels" id="panels">
+        <div class="panel source-panel">
+          <div class="panel-header">
+            <span class="panel-label"><i class="fas fa-pencil-alt"></i> Source</span>
+            <div class="panel-actions">
+              <button class="panel-btn" id="pasteBtn" title="Paste"><i class="fas fa-paste"></i></button>
+              <button class="panel-btn" id="micBtn" title="Voice"><i class="fas fa-microphone"></i></button>
+              <button class="panel-btn" id="clearBtn" title="Clear"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <textarea id="sourceText" class="text-area" placeholder="Type or paste text here… (Ctrl+Enter to translate)"
+            maxlength="5000"></textarea>
+          <div class="panel-footer">
+            <span class="char-count"><span id="charCount">0</span>/5000</span>
+            <button class="translate-btn glow-btn" id="translateBtn">
+              <span class="btn-text"><i class="fas fa-bolt"></i> Translate</span>
+              <span class="btn-loader"><i class="fas fa-spinner fa-spin"></i> AI Thinking…</span>
+              <div class="btn-shine"></div>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-divider">
+          <div class="arrow-flow"><i class="fas fa-chevron-right"></i></div>
+        </div>
+
+        <div class="panel output-panel">
+          <div class="panel-header">
+            <span class="panel-label"><i class="fas fa-language"></i> Translation</span>
+            <div class="panel-actions">
+              <button class="panel-btn" id="copyBtn" title="Copy" disabled><i class="fas fa-copy"></i></button>
+              <button class="panel-btn" id="speakBtn" title="Listen" disabled><i class="fas fa-volume-up"></i></button>
+              <button class="panel-btn" id="downloadBtn" title="Download" disabled><i
+                  class="fas fa-download"></i></button>
+              <button class="panel-btn" id="shareBtn" title="Share" disabled><i class="fas fa-share-alt"></i></button>
+            </div>
+          </div>
+          <div class="output-area" id="outputArea">
+            <div class="output-placeholder">
+              <div class="placeholder-orb"><i class="fas fa-language"></i></div>
+              <p>Translation appears here</p>
+              <small>Press Ctrl+Enter or click Translate</small>
+            </div>
+          </div>
+          <div class="panel-footer output-footer">
+            <div class="output-meta" id="outputMeta"></div>
+            <div class="rating-wrap" id="ratingWrap" style="display:none">
+              <span>Rate:</span>
+              <button class="rate-btn" data-val="1"><i class="fas fa-thumbs-up"></i></button>
+              <button class="rate-btn" data-val="0"><i class="fas fa-thumbs-down"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compare Panel (hidden by default) -->
+      <div class="compare-panel" id="comparePanel" style="display:none">
+        <div class="compare-header">
+          <h3><i class="fas fa-code-branch"></i> Translation Comparison</h3>
+          <small>Compare across 3 tone variations side-by-side</small>
+        </div>
+        <div class="compare-grid" id="compareGrid">
+          <div class="compare-placeholder"><i class="fas fa-bolt"></i>
+            <p>Click Translate to compare tones</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extras Panel -->
+      <div class="extras-panel" id="extrasPanel" style="display:none">
+        <div class="extras-tabs">
+          <button class="extras-tab active" data-tab="alternatives">🔄 Alternatives</button>
+          <button class="extras-tab" data-tab="breakdown">📖 Word Breakdown</button>
+          <button class="extras-tab" data-tab="pronunciation">🔊 Pronunciation</button>
+          <button class="extras-tab" data-tab="context">🌍 Cultural Context</button>
+          <button class="extras-tab" data-tab="grammar">📝 Grammar Notes</button>
+        </div>
+        <div class="extras-content" id="extrasContent"></div>
+      </div>
+
+      <!-- Voice Overlay -->
+      <div class="overlay" id="voiceOverlay" style="display:none">
+        <div class="overlay-modal voice-modal">
+          <div class="voice-rings">
+            <div class="vring vr1"></div>
+            <div class="vring vr2"></div>
+            <div class="vring vr3"></div>
+            <div class="vmic"><i class="fas fa-microphone"></i></div>
+          </div>
+          <p class="voice-label" id="voiceLabel">Listening…</p>
+          <p class="voice-interim" id="voiceInterim"></p>
+          <button class="btn-danger" id="voiceStopBtn"><i class="fas fa-stop"></i> Stop Recording</button>
+        </div>
+      </div>
+
+      <!-- File Overlay -->
+      <div class="overlay" id="fileOverlay" style="display:none">
+        <div class="overlay-modal">
+          <div class="file-drop-zone" id="fileDropZone">
+            <div class="file-icon-3d"><i class="fas fa-cloud-upload-alt"></i></div>
+            <p>Drop your .txt or .md file here</p>
+            <small>Max 50KB</small>
+            <label class="btn-primary" for="fileInput">Browse Files</label>
+            <input type="file" id="fileInput" accept=".txt,.md" hidden />
+          </div>
+          <button class="btn-ghost small" id="closeFileOverlay">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FEATURES ═══ -->
+  <section class="features-section section-pad" id="features">
+    <div class="section-label reveal-up">Capabilities</div>
+    <h2 class="section-title reveal-up">Everything You Need</h2>
+    <p class="section-sub reveal-up">From quick translations to deep linguistic intelligence — powered by AI.</p>
+    <div class="features-grid">
+      <div class="feature-card reveal-card" data-delay="0">
+        <div class="feature-3d-icon" style="--c1:#7C3AED;--c2:#A855F7"><i class="fas fa-brain"></i></div>
+        <h3>Context-Aware AI</h3>
+        <p>Understands idioms, slang, tone, and cultural nuance — not just dictionary words.</p>
+        <span class="feature-tag">Claude Sonnet</span>
+      </div>
+      <div class="feature-card reveal-card" data-delay="80">
+        <div class="feature-3d-icon" style="--c1:#06B6D4;--c2:#22D3EE"><i class="fas fa-bolt"></i></div>
+        <h3>Real-Time Streaming</h3>
+        <p>See words appear as AI generates them — no waiting, just instant linguistic flow.</p>
+        <span class="feature-tag">~50ms</span>
+      </div>
+      <div class="feature-card reveal-card" data-delay="160">
+        <div class="feature-3d-icon" style="--c1:#10B981;--c2:#34D399"><i class="fas fa-microphone-alt"></i></div>
+        <h3>Voice Input & Output</h3>
+        <p>Speak your text and hear the translated result with natural TTS playback.</p>
+        <span class="feature-tag">Web Speech API</span>
+      </div>
+      <div class="feature-card reveal-card" data-delay="240">
+        <div class="feature-3d-icon" style="--c1:#F59E0B;--c2:#FBBF24"><i class="fas fa-sliders-h"></i></div>
+        <h3>6 Tone Modes</h3>
+        <p>Switch between Formal, Casual, Literary, Technical, Neutral, and Humorous.</p>
+        <span class="feature-tag">Adaptive</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ HISTORY ═══ -->
+  <section class="history-section section-pad" id="history">
+    <div class="section-label reveal-up">Session Log</div>
+    <h2 class="section-title reveal-up">Translation History</h2>
+    <p class="section-sub reveal-up">Every translation auto-saved. Search, filter, reuse, or export.</p>
+    <div class="history-controls reveal-up">
+      <div class="history-search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="historySearch" placeholder="Search history…" class="history-search" />
+      </div>
+      <select id="historyFilterLang" class="tone-select"></select>
+      <button class="btn-ghost small" id="exportHistoryBtn"><i class="fas fa-file-export"></i> CSV</button>
+      <button class="btn-ghost small danger" id="clearHistoryBtn"><i class="fas fa-trash"></i> Clear</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="empty-state"><i class="fas fa-clock"></i>
+        <p>Translation history will appear here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="footer-glow"></div>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-name">Lingua<span class="brand-accent">AI</span></span>
+        <p>Breaking language barriers with artificial intelligence.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#translator">Translator</a>
+        <a href="#features">Features</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="#history">History</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tech Stack</h4>
+        <a href="#">Claude AI</a>
+        <a href="#">Web Speech API</a>
+        <a href="#">Three.js</a>
+        <a href="#">Node.js Proxy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Web Technology Project &copy; 2025
+      <p style="font-size:0.75rem;color:var(--text-muted)">Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to translate
+        &nbsp;·&nbsp; <kbd>Esc</kbd> to close overlays &nbsp;·&nbsp; <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> to
+        focus translator</p>
+    </div>
+  </footer>
+
+  <!-- Toast & Scroll Top -->
+  <div class="toast-container" id="toastContainer"></div>
+  <button class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></button>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
