@@ -2515,3 +2515,31 @@ kbd {
   outline: none;
   border-color: rgba(124, 92, 255, .6);
 }
+
+/* ── Emotion detection (voice mode) ── */
+.emotion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  animation: fadeIn .4s var(--ease);
+}
+
+.emotion-badge small {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+
+.emotion-live {
+  font-size: .95rem;
+  min-height: 1.5em;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}

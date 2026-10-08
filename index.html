@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LinguaAI — Intelligent Language Translator</title>
+  <title>HawkEyeAI — Intelligent Language Translator</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,7 +22,7 @@
   <!-- ═══ PAGE LOADER ═══ -->
   <div class="page-loader" id="pageLoader">
     <div class="loader-inner">
-      <div class="loader-logo">Lingua<span>AI</span></div>
+      <div class="loader-logo">HawkEye<span>AI</span></div>
       <div class="loader-bar">
         <div class="loader-fill" id="loaderFill"></div>
       </div>
@@ -35,17 +35,17 @@
     <div class="nav-inner">
       <div class="nav-brand">
         <div class="brand-orb"></div>
-        <span class="brand-name">Lingua<span class="brand-accent">AI</span></span>
+        <span class="brand-name">HawkEye<span class="brand-accent">AI</span></span>
       </div>
       <div class="nav-links">
         <a href="#translator" class="nav-link">Translate</a>
         <a href="#features" class="nav-link">Features</a>
       </div>
-      <div class="nav-actions">
+      <!-- <div class="nav-actions">
         <button class="btn-theme" id="themeToggle"><i class="fas fa-moon" id="themeIcon"></i></button>
         <!-- <button class="btn-nav-cta glow-btn">Get Started Free</button> -->
-      </div>
-      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div> -->
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="#translator" class="mobile-link">Translate</a>
@@ -69,10 +69,10 @@
         perfect translations instantly.
       </p>
       <div class="hero-actions">
-        <a href="#translator" class="btn-primary magnetic">
+        <!-- <a href="#translator" class="btn-primary magnetic">
           <!-- > <span><i class="fas fa-bolt"></i> Start Translating Free</span -->
-          <div class="btn-shine"></div>
-        </a>
+        <div class="btn-shine"></div>
+        </a> -->
         <!-- <a href="#features" class="btn-ghost magnetic">
           Watch Demo <i class="fas fa-play-circle"></i>
         </a> -->
@@ -235,6 +235,7 @@
             maxlength="5000"></textarea>
           <div class="panel-footer">
             <span class="char-count"><span id="charCount">0</span>/5000</span>
+            <span class="emotion-badge" id="emotionBadge" style="display:none"></span>
             <button class="translate-btn glow-btn" id="translateBtn">
               <span class="btn-text"><i class="fas fa-bolt"></i> Translate</span>
               <span class="btn-loader"><i class="fas fa-spinner fa-spin"></i> AI Thinking…</span>
@@ -317,6 +318,7 @@
           </div>
           <p class="voice-label" id="voiceLabel">Listening…</p>
           <p class="voice-interim" id="voiceInterim"></p>
+          <p class="emotion-live" id="emotionLive"></p>
           <button class="btn-danger" id="voiceStopBtn"><i class="fas fa-stop"></i> Stop Recording</button>
         </div>
       </div>
@@ -396,7 +398,7 @@
     <div class="footer-glow"></div>
     <div class="footer-inner">
       <div class="footer-brand">
-        <span class="brand-name">Lingua<span class="brand-accent">AI</span></span>
+        <span class="brand-name">HawkEye<span class="brand-accent">AI</span></span>
         <p>Breaking language barriers with artificial intelligence.</p>
         <div class="footer-social">
           <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
