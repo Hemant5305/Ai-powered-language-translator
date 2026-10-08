@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   HawkEyeAI v2 — Professional Stylesheet
+   LinguaAI v2 — Professional Stylesheet
    3D Effects · Smooth Animations · Dark/Light · Fully Responsive
    ══════════════════════════════════════════════════════════════ */
 
@@ -2466,11 +2466,52 @@ kbd {
 }
 
 /* ── Quick Phrases ── */
-.quick-phrases { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 14px; }
-.qp-label { font-size:.8rem; color:var(--text-muted); margin-right:4px; }
-.qp-chip {
-  padding:6px 14px; border-radius:999px; cursor:pointer; font:inherit; font-size:.82rem;
-  color:var(--text-primary, #fff); background:var(--bg-card); border:1px solid rgba(255,255,255,.12);
-  transition:transform .15s, background .15s, border-color .15s;
+.quick-phrases {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
 }
-.qp-chip:hover { transform:translateY(-2px); background:var(--bg-card-hover); border-color:rgba(124,92,255,.6); }
+
+.qp-label {
+  font-size: .8rem;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.qp-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: .82rem;
+  color: var(--text-primary, #fff);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, .12);
+  transition: transform .15s, background .15s, border-color .15s;
+}
+
+.qp-chip:hover {
+  transform: translateY(-2px);
+  background: var(--bg-card-hover);
+  border-color: rgba(124, 92, 255, .6);
+}
+
+
+/* ── Speech speed select ── */
+.speed-select {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: .75rem;
+  cursor: pointer;
+  color: var(--text-primary, #fff);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.speed-select:focus {
+  outline: none;
+  border-color: rgba(124, 92, 255, .6);
+}
