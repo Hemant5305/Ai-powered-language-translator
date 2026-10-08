@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   LinguaAI v2 — Professional Stylesheet
+   HawkEye AI — Professional Stylesheet
    3D Effects · Smooth Animations · Dark/Light · Fully Responsive
    ══════════════════════════════════════════════════════════════ */
 
@@ -1409,7 +1409,9 @@ select {
 }
 
 .output-text {
-  animation: fadeIn .4s var(--ease)
+  animation: fadeIn .4s var(--ease);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere
 }
 
 /* Streaming cursor */
@@ -2673,4 +2675,40 @@ kbd {
 .output-footer {
   gap: .6rem;
   flex-wrap: wrap;
+}
+
+/* ── History: "View All" toggle ── */
+.history-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.1rem;
+}
+
+.history-list.expanded {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: .4rem;
+}
+
+/* ── Compare mode notes ── */
+.compare-note {
+  margin-top: .55rem;
+  font-size: .72rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.compare-card {
+  cursor: pointer;
+}
+
+/* ── Extras tab helpers ── */
+.extras-note {
+  margin-top: .8rem;
+  font-size: .75rem;
+  color: var(--text-muted);
+}
+
+.extras-action {
+  margin-top: .8rem;
 }

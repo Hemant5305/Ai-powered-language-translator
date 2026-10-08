@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HawkEyeAI — Intelligent Language Translator</title>
+  <title>HawkEye AI — Intelligent Language Translator</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,7 +22,7 @@
   <!-- ═══ PAGE LOADER ═══ -->
   <div class="page-loader" id="pageLoader">
     <div class="loader-inner">
-      <div class="loader-logo">HawkEye<span>AI</span></div>
+      <div class="loader-logo">HawkEye <span>AI</span></div>
       <div class="loader-bar">
         <div class="loader-fill" id="loaderFill"></div>
       </div>
@@ -35,7 +35,7 @@
     <div class="nav-inner">
       <div class="nav-brand">
         <div class="brand-orb"></div>
-        <span class="brand-name">HawkEye<span class="brand-accent">AI</span></span>
+        <span class="brand-name">HawkEye <span class="brand-accent">AI</span></span>
       </div>
       <div class="nav-links">
         <a href="#translator" class="nav-link">Translate</a>
@@ -47,7 +47,7 @@
         <button class="btn-nav-cta glow-btn">Get Started Free</button>
       </div>
       -->
-    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="#translator" class="mobile-link">Translate</a>
@@ -259,9 +259,9 @@
               <button class="panel-btn" id="copyBtn" title="Copy" disabled><i class="fas fa-copy"></i></button>
               <button class="panel-btn" id="speakBtn" title="Listen" disabled><i class="fas fa-volume-up"></i></button>
               <select id="speedSelect" class="speed-select" title="Speech speed">
-                <option value="0.6">🐢 Slow</option>
+                <option value="0.55">🐢 Slow</option>
                 <option value="0.9" selected>Normal</option>
-                <option value="1.3">🐇 Fast</option>
+                <option value="1.5">🐇 Fast</option>
               </select>
               <button class="panel-btn" id="downloadBtn" title="Download" disabled><i
                   class="fas fa-download"></i></button>
@@ -396,6 +396,9 @@
         <p>Translation history will appear here.</p>
       </div>
     </div>
+    <div class="history-more" id="historyMoreWrap" style="display:none">
+      <button class="btn-ghost small" id="historyViewAllBtn"><i class="fas fa-list"></i> View All</button>
+    </div>
   </section>
 
   <!-- ═══ FOOTER ═══ -->
@@ -403,7 +406,7 @@
     <div class="footer-glow"></div>
     <div class="footer-inner">
       <div class="footer-brand">
-        <span class="brand-name">HawkEye<span class="brand-accent">AI</span></span>
+        <span class="brand-name">HawkEye <span class="brand-accent">AI</span></span>
         <p>Breaking language barriers with artificial intelligence.</p>
         <div class="footer-social">
           <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
@@ -429,7 +432,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>Web Technology Project &copy; 2025
+      <p>Web Technology Project &copy; 2025</p>
       <p style="font-size:0.75rem;color:var(--text-muted)">Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to translate
         &nbsp;·&nbsp; <kbd>Esc</kbd> to close overlays &nbsp;·&nbsp; <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> to
         focus translator</p>
