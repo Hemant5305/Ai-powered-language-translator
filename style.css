@@ -2698,9 +2698,7 @@ kbd {
   color: var(--text-muted);
 }
 
-.compare-card {
-  cursor: pointer;
-}
+.compare-card { cursor: pointer; }
 
 /* ── Extras tab helpers ── */
 .extras-note {
