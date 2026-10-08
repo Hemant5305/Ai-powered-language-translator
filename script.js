@@ -339,7 +339,7 @@ function initRevealObserver() {
 function applyTheme(theme) {
   S.theme = theme;
   els.body.dataset.theme = theme;
-  els.themeIcon.className = theme === "dark" ? "fas fa-moon" : "fas fa-sun";
+  if (els.themeIcon) els.themeIcon.className = theme === "dark" ? "fas fa-moon" : "fas fa-sun";
   localStorage.setItem(THEME_KEY, theme);
 }
 
@@ -368,7 +368,7 @@ function bindEvents() {
   window.addEventListener("scroll", onScroll);
   els.hamburger.addEventListener("click", toggleMenu);
   document.querySelectorAll(".mobile-link").forEach(l => l.addEventListener("click", closeMenu));
-  els.themeToggle.addEventListener("click", () => applyTheme(S.theme === "dark" ? "light" : "dark"));
+  if (els.themeToggle) els.themeToggle.addEventListener("click", () => applyTheme(S.theme === "dark" ? "light" : "dark"));
 
   // Translator
   els.translateBtn.addEventListener("click", handleTranslate);
