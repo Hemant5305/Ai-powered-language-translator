@@ -562,7 +562,61 @@ Reply ONLY with this exact JSON (no markdown):
 }`;
 }
 
+/* ── FREE MODE (no API key needed) ───────────────────────────────
+   If API_KEY is empty, translation uses the free MyMemory API.
+   It returns data in the same shape as Claude, so the rest of the
+   app works unchanged. (Alternatives / grammar notes need Claude.)  */
+const USE_FREE_API = !API_KEY;
+const FREE_CACHE = new Map();
+const MM_CODE = { zh: "zh-CN", zt: "zh-TW" };
+
+function langToCode(name) {
+  const l = LANGUAGES.find(x => x.name === name);
+  return l ? (MM_CODE[l.code] || l.code) : "en";
+}
+
+function splitChunks(text, max = 450) {
+  const parts = text.split(/(?<=[.!?।。\n])\s*/).filter(Boolean);
+  const chunks = []; let cur = "";
+  for (let p of parts) {
+    while (p.length > max) { chunks.push(p.slice(0, max)); p = p.slice(max); }
+    if ((cur + p).length > max) { chunks.push(cur); cur = p; } else cur += p;
+  }
+  if (cur) chunks.push(cur);
+  return chunks;
+}
+
+async function freeTranslate(prompt) {
+  const src = (prompt.match(/Source language: (.+)/) || [])[1]?.trim();
+  const tgt = (prompt.match(/Target language: (.+)/) || [])[1]?.trim();
+  const text = (prompt.match(/"""\n([\s\S]*?)\n"""/) || [])[1] || "";
+  const from = src === "auto-detect" ? "Autodetect" : langToCode(src);
+  const to = langToCode(tgt);
+
+  const key = `${from}|${to}|${text}`;
+  if (FREE_CACHE.has(key)) return FREE_CACHE.get(key);
+
+  let out = [], detected = null;
+  for (const chunk of splitChunks(text)) {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=${from}|${to}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Translation service error (HTTP ${res.status})`);
+    const j = await res.json();
+    if (j.responseStatus && Number(j.responseStatus) !== 200) throw new Error(j.responseDetails || "Translation failed");
+    out.push(j.responseData.translatedText);
+    if (j.responseData.detectedLanguage) detected = j.responseData.detectedLanguage;
+  }
+  const detName = detected && LANGUAGES.find(l => l.code === detected.split("-")[0])?.name;
+  const result = { content: [{ text: JSON.stringify({
+    translation: out.join(" "),
+    detected_language: detName || detected || null
+  }) }] };
+  FREE_CACHE.set(key, result);
+  return result;
+}
+
 async function callAPI(prompt) {
+  if (USE_FREE_API) return freeTranslate(prompt);
   const res = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -924,3 +978,18 @@ function dlFile(content, name, mime) {
    START
    ══════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", init);
+
+/* ══════════════════════════════════════════════════════════════
+   QUICK PHRASES — one-click common phrases
+   ══════════════════════════════════════════════════════════════ */
+(function quickPhrases() {
+  const wrap = document.getElementById("quickPhrases");
+  if (!wrap) return;
+  wrap.querySelectorAll(".qp-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      els.sourceText.value = chip.dataset.text;
+      els.sourceText.dispatchEvent(new Event("input"));
+      handleTranslate();
+    });
+  });
+})();
