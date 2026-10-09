@@ -413,7 +413,7 @@ button {
 .section-pad {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 7rem 2rem;
+  padding: 3rem 2rem;
   position: relative;
   z-index: 1
 }
@@ -444,7 +444,7 @@ button {
 .section-sub {
   color: var(--text-secondary);
   max-width: 560px;
-  margin: 0 auto 3.5rem;
+  margin: 0 auto 2rem;
   font-size: 1.03rem
 }
 
@@ -488,13 +488,13 @@ button {
 
 /* ── Hero ────────────────────────────────────────────────────── */
 .hero {
-  min-height: 100vh;
+  min-height: min(100vh, 780px);
   max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5rem;
-  padding: calc(var(--nav-h) + 2rem) 2rem 4rem;
+  padding: calc(var(--nav-h) + 2rem) 2rem 2.5rem;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -2418,7 +2418,7 @@ kbd {
   }
 
   .section-pad {
-    padding: 4.5rem 1.25rem
+    padding: 2.25rem 1.25rem
   }
 
   .features-grid {
@@ -2698,7 +2698,9 @@ kbd {
   color: var(--text-muted);
 }
 
-.compare-card { cursor: pointer; }
+.compare-card {
+  cursor: pointer;
+}
 
 /* ── Extras tab helpers ── */
 .extras-note {
@@ -2709,4 +2711,21 @@ kbd {
 
 .extras-action {
   margin-top: .8rem;
+}
+
+/* ── Extra moods ── */
+[data-mood="tired"] {
+  --mood-c: #8B5CF6
+}
+
+[data-mood="confused"] {
+  --mood-c: #EAB308
+}
+
+[data-mood="polite"] {
+  --mood-c: #38BDF8
+}
+
+[data-mood="neutral"] {
+  --mood-c: #9896b8
 }
