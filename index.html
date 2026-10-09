@@ -237,6 +237,7 @@
           </div>
           <textarea id="sourceText" class="text-area" placeholder="Type or paste text here…"
             maxlength="5000"></textarea>
+          <div class="sense-strip" id="senseStrip" style="display:none"></div>
           <div class="panel-footer">
             <span class="char-count"><span id="charCount">0</span>/5000</span>
             <span class="emotion-badge" id="emotionBadge" style="display:none"></span>
@@ -303,6 +304,7 @@
       <div class="extras-panel" id="extrasPanel" style="display:none">
         <div class="extras-tabs">
           <button class="extras-tab active" data-tab="alternatives">🔄 Alternatives</button>
+          <button class="extras-tab" data-tab="sense">🎯 Word Sense</button>
           <button class="extras-tab" data-tab="breakdown">📖 Word Breakdown</button>
           <button class="extras-tab" data-tab="pronunciation">🔊 Pronunciation</button>
           <button class="extras-tab" data-tab="context">🌍 Cultural Context</button>
@@ -352,7 +354,7 @@
       <div class="feature-card reveal-card" data-delay="0">
         <div class="feature-3d-icon" style="--c1:#7C3AED;--c2:#A855F7"><i class="fas fa-brain"></i></div>
         <h3>Context-Aware AI</h3>
-        <p>Understands idioms, slang, tone, and cultural nuance — not just dictionary words.</p>
+        <p>Understands idioms, slang, tone, and which meaning a word has — “bank” of money vs “bank” of a river.</p>
         <span class="feature-tag">Translation API</span>
       </div>
       <div class="feature-card reveal-card" data-delay="80">
@@ -441,6 +443,7 @@
 
   <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="senses.js"></script>
   <script src="script.js"></script>
 </body>
 
