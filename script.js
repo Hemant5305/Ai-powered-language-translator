@@ -33,7 +33,7 @@ const LANGUAGES = [
   { code: "ka", name: "Georgian", flag: "🇬🇪" }, { code: "de", name: "German", flag: "🇩🇪" },
   { code: "el", name: "Greek", flag: "🇬🇷" }, { code: "gu", name: "Gujarati", flag: "🇮🇳" },
   { code: "ht", name: "Haitian Creole", flag: "🇭🇹" }, { code: "ha", name: "Hausa", flag: "🇳🇬" },
-  { code: "he", name: "Hebrew", flag: "🇮🇱" }, { code: "hi", name: "Hindi", flag: "🇮🇳" },
+  { code: "he", name: "Hebrew", flag: "🇮🇱" }, { code: "hi", name: "Hindi", flag: "🇮🇳" }, { code: "hinglish", name: "Hinglish", flag: "🇮🇳" },
   { code: "hu", name: "Hungarian", flag: "🇭🇺" }, { code: "is", name: "Icelandic", flag: "🇮🇸" },
   { code: "id", name: "Indonesian", flag: "🇮🇩" }, { code: "ga", name: "Irish", flag: "🇮🇪" },
   { code: "it", name: "Italian", flag: "🇮🇹" }, { code: "ja", name: "Japanese", flag: "🇯🇵" },
@@ -69,7 +69,7 @@ const LOCALE = {
   af: "af-ZA", sq: "sq-AL", am: "am-ET", ar: "ar-SA", hy: "hy-AM", az: "az-AZ", bn: "bn-BD", bs: "bs-BA",
   bg: "bg-BG", ca: "ca-ES", zh: "zh-CN", zt: "zh-TW", hr: "hr-HR", cs: "cs-CZ", da: "da-DK", nl: "nl-NL",
   en: "en-US", eo: "eo", et: "et-EE", fi: "fi-FI", fr: "fr-FR", gl: "gl-ES", ka: "ka-GE", de: "de-DE",
-  el: "el-GR", gu: "gu-IN", ht: "ht-HT", ha: "ha-NG", he: "he-IL", hi: "hi-IN", hu: "hu-HU", is: "is-IS",
+  el: "el-GR", gu: "gu-IN", ht: "ht-HT", ha: "ha-NG", he: "he-IL", hi: "hi-IN", hinglish: "hi-IN", hu: "hu-HU", is: "is-IS",
   id: "id-ID", ga: "ga-IE", it: "it-IT", ja: "ja-JP", kn: "kn-IN", kk: "kk-KZ", km: "km-KH", ko: "ko-KR",
   ku: "ku", lo: "lo-LA", la: "la", lv: "lv-LV", lt: "lt-LT", mk: "mk-MK", ms: "ms-MY", ml: "ml-IN",
   mt: "mt-MT", mi: "mi-NZ", mr: "mr-IN", mn: "mn-MN", my: "my-MM", ne: "ne-NP", no: "nb-NO", ps: "ps-AF",
@@ -104,6 +104,7 @@ const LANG_NOTES = {
   fa: { grammar: "Persian is written right to left, has no grammatical gender and uses subject–object–verb order.", culture: "Persian has formal and informal “you” (شما and تو), and a courtesy practice called taarof shapes polite conversation." },
   bn: { grammar: "Bengali uses subject–object–verb order, has no grammatical gender, and verbs change with person and level of respect.", culture: "Bengali has three levels of “you” (তুই, তুমি, আপনি). আপনি is the respectful form." },
   he: { grammar: "Hebrew is written right to left, nouns and verbs are masculine or feminine, and short vowels are usually omitted.", culture: "Hebrew has no tu/vous-style formal “you”, and everyday speech is fairly informal and direct." },
+  hinglish: { grammar: "Hinglish is Hindi written in Roman letters, usually with English words mixed in. There is no fixed spelling, so “nahi”, “nahin” and “nhi” are all common.", culture: "Hinglish is how many people in India chat on WhatsApp and social media. It is casual, so use proper Hindi or English for formal writing." },
   el: { grammar: "Greek has three genders and four cases, and verbs change by person, tense and mood.", culture: "Greek uses informal “εσύ” and formal “εσείς” for “you”." }
 };
 
@@ -119,6 +120,7 @@ const S = {
   activeExtrasTab: "alternatives",
   lastParsed: null,
   lastSource: "",
+  speakText: "",
   lastSrcCode: "",
   currentTargetCode: "",
   historyExpanded: false,
@@ -154,6 +156,9 @@ const els = {
   copyBtn: $("copyBtn"),
   speakBtn: $("speakBtn"),
   speedSelect: $("speedSelect"),
+  emotionBadge: $("emotionBadge"),
+  moodBadge: $("moodBadge"),
+  emotionLive: $("emotionLive"),
   downloadBtn: $("downloadBtn"),
   shareBtn: $("shareBtn"),
   pasteBtn: $("pasteBtn"),
@@ -412,7 +417,7 @@ function populateSelects() {
     hist.appendChild(new Option(`${l.flag} ${l.name}`, l.code));
   });
   src.value = "auto";
-  tgt.value = "es";
+  tgt.value = "hi";
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -428,7 +433,7 @@ function bindEvents() {
   // Translator
   els.translateBtn.addEventListener("click", handleTranslate);
   els.sourceText.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") handleTranslate(); });
-  els.sourceText.addEventListener("input", () => { updateCharCount(); handleAutoTranslate(); });
+  els.sourceText.addEventListener("input", () => { updateCharCount(); updateSourceMood(); handleAutoTranslate(); });
   els.swapBtn.addEventListener("click", swapLanguages);
 
   // Panel buttons
@@ -523,6 +528,7 @@ async function handleTranslate() {
     const parsed = await translateText(text, srcLang, tgtLang, tone);
     await streamText(outputEl, parsed.translation);
     S.currentTranslation = parsed.translation;
+    S.speakText = parsed.hindi || parsed.translation; // Hinglish is read aloud from its Devanagari form
     S.lastParsed = parsed;
     S.lastSource = text;
     S.lastSrcCode = srcCode !== "auto" ? srcCode : (parsed.detected_code || "");
@@ -534,6 +540,7 @@ async function handleTranslate() {
     els.outputMeta.textContent = `${wc} word${wc !== 1 ? "s" : ""} · ${shownTone} · ${tgtLang}`;
     els.ratingWrap.style.display = "flex";
     enableOutputBtns(true);
+    paintMood(els.moodBadge, detectMood(text) || detectMood(parsed.translation));
 
     els.extrasPanel.style.display = "block";
     renderExtras(parsed, S.activeExtrasTab);
@@ -586,18 +593,24 @@ async function runCompareMode(text, srcLang, tgtLang) {
       }
     });
     els.outputArea.innerHTML = `<div class="output-placeholder"><div class="placeholder-orb"><i class="fas fa-code-branch"></i></div><p>Pick a version below</p><small>Click a card to use it here</small></div>`;
-    toast("Comparison complete! Click a card to use it.", "success");
+    paintMood(els.moodBadge, detectMood(text));
+        toast("Comparison complete! Click a card to use it.", "success");
   } finally {
     S.isTranslating = false;
     setLoadingUI(false);
   }
 }
 
+const describeLang = n => n === "Hinglish"
+  ? 'Hinglish (Hindi written in Roman/English letters, the casual way Indians type on WhatsApp, e.g. "kya haal hai?"; keep common English words as they are)'
+  : n;
+
 function buildPrompt(text, srcLang, tgtLang, tone) {
+  const hinglishNote = tgtLang === "Hinglish" ? "\nBecause the target is Hinglish, also fill hindi_script with the same translation in Devanagari." : "";
   return `You are an expert linguist. Translate the text below accurately.
 
-Source language: ${srcLang}
-Target language: ${tgtLang}
+Source language: ${describeLang(srcLang)}
+Target language: ${describeLang(tgtLang)}
 Tone: ${tone} (formal=professional, casual=friendly, literary=poetic, technical=precise, neutral=standard, humorous=light-hearted)
 
 Text:
@@ -613,8 +626,9 @@ Reply ONLY with this exact JSON (no markdown):
   "word_breakdown": [{"original":"word","translated":"translation","pos":"noun/verb/adj/etc"}],
   "pronunciation": "romanization or phonetic guide if target is non-Latin script, else null",
   "cultural_context": "1-2 sentences on idioms, cultural notes, or regional nuance",
-  "grammar_notes": "1-2 sentences on key grammar differences between source and target language"
-}`;
+  "grammar_notes": "1-2 sentences on key grammar differences between source and target language",
+  "hindi_script": "Devanagari version of the translation if target is Hinglish, else null"
+}${hinglishNote}`;
 }
 
 /* One entry point for both engines — always resolves to
@@ -625,7 +639,8 @@ async function translateText(text, srcLang, tgtLang, tone) {
   const full = data.content?.[0]?.text || "";
   let parsed = null;
   try { const m = full.match(/\{[\s\S]*\}/); parsed = m ? JSON.parse(m[0]) : null; } catch { parsed = null; }
-  return parsed?.translation ? parsed : { translation: full };
+  if (parsed?.translation) { if (parsed.hindi_script) parsed.hindi = parsed.hindi_script; return parsed; }
+  return { translation: full };
 }
 
 async function callAPI(prompt) {
@@ -655,7 +670,7 @@ async function callAPI(prompt) {
    tones need an LLM — add an API_KEY above to enable them.          */
 const USE_FREE_API = !API_KEY;
 const FREE_CACHE = new Map();
-const MM_CODE = { zh: "zh-CN", zt: "zh-TW" };
+const MM_CODE = { zh: "zh-CN", zt: "zh-TW", hinglish: "hi" };
 const mmCode = code => MM_CODE[code] || code;
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -724,7 +739,8 @@ async function mmTranslateText(text, from, to) {
 }
 
 async function freeTranslate(text, srcLang, tgtLang, tone) {
-  const from = srcLang === "auto-detect" ? "Autodetect" : langToCode(srcLang);
+  const hinglishIn = srcLang === "Hinglish";
+  const from = (srcLang === "auto-detect" || hinglishIn) ? "Autodetect" : langToCode(srcLang);
   const to = langToCode(tgtLang);
   const english = from === "en" || (from === "Autodetect" && looksEnglish(text));
   const toned = applyTone(text, tone, english);
@@ -736,7 +752,13 @@ async function freeTranslate(text, srcLang, tgtLang, tone) {
     p.catch(() => FREE_CACHE.delete(key));
   }
   const base = await FREE_CACHE.get(key);
-  return { ...base, tone_applied: toned.tone, notice: toned.note || null };
+  const notice = [toned.note, hinglishIn ? "Typed Hinglish is understood best in AI mode (add an API key). Voice input in Hindi works fully." : ""].filter(Boolean).join(" ") || null;
+  if (tgtLang === "Hinglish") {
+    const hindiOf = {};
+    const alternatives = base.alternatives.map(a => { const r = toHinglish(a); hindiOf[r] = a; return r; });
+    return { ...base, translation: toHinglish(base.translation), hindi: base.translation, alternatives, hindiOf, tone_applied: toned.tone, notice };
+  }
+  return { ...base, tone_applied: toned.tone, notice };
 }
 
 /* ── Tone (free mode): rule-based, English source only ── */
@@ -807,6 +829,7 @@ function showOutput(text) {
   const el = createOutputEl();
   el.textContent = text;
   S.currentTranslation = text;
+  S.speakText = text;
   enableOutputBtns(true);
 }
 
@@ -819,6 +842,7 @@ function resetOutput() {
   if (S.speaking) stopSpeaking();
   els.outputArea.innerHTML = `<div class="output-placeholder"><div class="placeholder-orb"><i class="fas fa-language"></i></div><p>Translating…</p></div>`;
   els.outputMeta.textContent = "";
+  paintMood(els.moodBadge, null);
   els.ratingWrap.style.display = "none";
   els.extrasPanel.style.display = "none";
   els.detectedLang.textContent = "";
@@ -893,7 +917,7 @@ async function loadBreakdown(parsed) {
     const res = await Promise.all(words.slice(i, i + 4).map(async w => {
       const key = `wb|${from}|${to}|${w.toLowerCase()}`;
       if (!FREE_CACHE.has(key)) FREE_CACHE.set(key, mmFetch(w, from, to).then(j => decodeEntities(j.responseData.translatedText)));
-      try { return { original: w, translated: await FREE_CACHE.get(key) }; }
+      try { const tr = await FREE_CACHE.get(key); return { original: w, translated: S.currentTargetCode === "hinglish" ? toHinglish(tr) : tr }; }
       catch { FREE_CACHE.delete(key); return { original: w, translated: "—" }; }
     }));
     rows.push(...res);
@@ -934,7 +958,8 @@ function renderExtras(parsed, tab) {
     }
   } else if (tab === "pronunciation") {
     const rom = parsed.pronunciation ? null : romanize(S.currentTranslation, tgtCode);
-    if (parsed.pronunciation) html = box("#7C3AED", "PHONETIC GUIDE", parsed.pronunciation, true) + listenBtn;
+    if (tgtCode === "hinglish" && parsed.hindi) html = box("#7C3AED", "HINDI SCRIPT (देवनागरी)", parsed.hindi, true) + listenBtn;
+    else if (parsed.pronunciation) html = box("#7C3AED", "PHONETIC GUIDE", parsed.pronunciation, true) + listenBtn;
     else if (rom) html = box("#7C3AED", "ROMANIZATION (APPROXIMATE)", rom, true) + listenBtn;
     else if (!NON_LATIN.test(S.currentTranslation)) html = `<p>${esc(tgtName)} is written in the Latin alphabet here, so it reads as written. Press Listen to hear it.</p>` + listenBtn;
     else html = `<p>A romanized guide for ${esc(tgtName)} needs AI mode (add an API key in script.js). You can still hear it spoken.</p>` + listenBtn;
@@ -954,6 +979,7 @@ window.useAlt = function (text) {
   const el = els.outputArea.querySelector(".output-text");
   if (el) el.textContent = text;
   S.currentTranslation = text;
+  S.speakText = S.lastParsed?.hindiOf?.[text] || text;
   if (S.lastParsed) renderExtras(S.lastParsed, S.activeExtrasTab);
   toast("Alternative applied!", "info");
 };
@@ -987,6 +1013,7 @@ function setSource(text, append = false) {
   if (full.length > 5000) toast("Text trimmed to 5000 characters.", "info");
   els.sourceText.value = full.slice(0, 5000);
   updateCharCount();
+  updateSourceMood();
   handleAutoTranslate();
 }
 
@@ -1008,10 +1035,11 @@ async function pasteClipboard() {
 function clearSource() {
   if (S.speaking) stopSpeaking();
   els.sourceText.value = ""; updateCharCount();
-  els.outputArea.innerHTML = `<div class="output-placeholder"><div class="placeholder-orb"><i class="fas fa-language"></i></div><p>Translation appears here</p><small>Press Ctrl+Enter or click Translate</small></div>`;
+  els.outputArea.innerHTML = `<div class="output-placeholder"><div class="placeholder-orb"><i class="fas fa-language"></i></div><p>Translation appears here</p></div>`;
   els.outputMeta.textContent = ""; els.ratingWrap.style.display = "none";
   els.extrasPanel.style.display = "none"; els.comparePanel.style.display = "none";
   els.detectedLang.textContent = ""; S.currentTranslation = ""; enableOutputBtns(false);
+  paintMood(els.emotionBadge, null); paintMood(els.moodBadge, null);
 }
 
 async function copyTranslation() {
@@ -1071,7 +1099,7 @@ function startSpeaking() {
   const locale = LOCALE[code] || "en-US";
   const voice = pickVoice(locale);
   const rate = parseFloat(els.speedSelect.value) || 0.9;
-  const parts = splitForSpeech(S.currentTranslation);
+  const parts = splitForSpeech(S.speakText || S.currentTranslation);
 
   if (!voice && synth.getVoices().length && !locale.startsWith("en")) {
     toast("No voice for this language is installed on your device — audio may sound off.", "info");
@@ -1160,6 +1188,8 @@ function startVoice() {
     for (let i = e.resultIndex; i < e.results.length; i++) { (e.results[i].isFinal ? (final += e.results[i][0].transcript) : (interim += e.results[i][0].transcript)); }
     if (final) setSource(final.trim() + " ", true);
     els.voiceInterim.textContent = interim;
+    const live = detectMood((els.sourceText.value + " " + interim).trim());
+    els.emotionLive.textContent = live ? `${live.emoji} Sounds ${live.label.toLowerCase()}` : "";
   };
   S.recognition.onerror = e => {
     const msg = {
@@ -1182,6 +1212,7 @@ function stopVoice() {
   els.micBtn.classList.remove("recording");
   els.voiceOverlay.style.display = "none";
   els.voiceInterim.textContent = "";
+  els.emotionLive.textContent = "";
   resetModeToText();
 }
 
@@ -1285,6 +1316,124 @@ function exportHistoryCSV() {
   ].join("\n");
   dlFile(csv, "hawkeye_ai_history.csv", "text/csv");
   toast("History exported!", "success");
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HINGLISH  (Hindi in Roman letters, WhatsApp style)
+   Devanagari → Roman, rule based. Spellings are approximate because
+   Hinglish has no fixed spelling.
+   ══════════════════════════════════════════════════════════════ */
+const DEV_CONS = { क: "k", ख: "kh", ग: "g", घ: "gh", ङ: "n", च: "ch", छ: "chh", ज: "j", झ: "jh", ञ: "n", ट: "t", ठ: "th", ड: "d", ढ: "dh", ण: "n", त: "t", थ: "th", द: "d", ध: "dh", न: "n", प: "p", फ: "ph", ब: "b", भ: "bh", म: "m", य: "y", र: "r", ल: "l", व: "v", श: "sh", ष: "sh", स: "s", ह: "h", ळ: "l", "क़": "q", "ख़": "kh", "ग़": "g", "ज़": "z", "ड़": "r", "ढ़": "rh", "फ़": "f" };
+const DEV_NUKTA = { क: "क़", ख: "ख़", ग: "ग़", ज: "ज़", ड: "ड़", ढ: "ढ़", फ: "फ़" };
+const DEV_VOWEL = { अ: "a", आ: "aa", इ: "i", ई: "ee", उ: "u", ऊ: "oo", ऋ: "ri", ए: "e", ऐ: "ai", ओ: "o", औ: "au", ऑ: "o", ऍ: "e" };
+const DEV_MATRA = { "ा": "A", "ि": "i", "ी": "I", "ु": "u", "ू": "U", "ृ": "ri", "े": "e", "ै": "ai", "ो": "o", "ौ": "au", "ॉ": "o", "ॅ": "e" };
+const HINGLISH_WORDS = {
+  "है": "hai", "हैं": "hain", "हूँ": "hoon", "हूं": "hoon", "हो": "ho", "था": "tha", "थी": "thi", "थे": "the", "और": "aur", "मैं": "main", "मैंने": "maine", "में": "mein",
+  "मेरा": "mera", "मेरी": "meri", "मेरे": "mere", "तुम": "tum", "तुम्हारा": "tumhara", "तुम्हारी": "tumhari", "तुम्हें": "tumhein", "आप": "aap", "आपका": "aapka", "आपकी": "aapki", "आपके": "aapke",
+  "हम": "hum", "हमारा": "hamara", "हमारी": "hamari", "वो": "woh", "वह": "woh", "यह": "yeh", "ये": "ye", "यहाँ": "yahan", "यहां": "yahan", "वहाँ": "wahan", "वहां": "wahan",
+  "कहाँ": "kahan", "कहां": "kahan", "क्या": "kya", "क्यों": "kyun", "कैसे": "kaise", "कैसा": "kaisa", "कैसी": "kaisi", "कब": "kab", "कौन": "kaun", "कितना": "kitna", "कितने": "kitne", "कितनी": "kitni",
+  "नहीं": "nahi", "ना": "na", "हाँ": "haan", "हां": "haan", "जी": "ji", "ठीक": "theek", "अच्छा": "accha", "अच्छी": "acchi", "अच्छे": "acche", "बहुत": "bahut",
+  "धन्यवाद": "dhanyavaad", "शुक्रिया": "shukriya", "नमस्ते": "namaste", "कृपया": "kripya", "माफ़": "maaf", "माफ़ी": "maafi", "प्यार": "pyaar", "दोस्त": "dost",
+  "घर": "ghar", "खाना": "khaana", "पानी": "paani", "आज": "aaj", "कल": "kal", "अभी": "abhi", "फिर": "phir", "लेकिन": "lekin", "पर": "par", "को": "ko", "का": "ka", "की": "ki", "के": "ke",
+  "से": "se", "तक": "tak", "भी": "bhi", "तो": "toh", "ही": "hi", "सब": "sab", "कुछ": "kuch", "कोई": "koi", "मुझे": "mujhe", "मुझको": "mujhko", "तुझे": "tujhe", "उसे": "use", "उन्हें": "unhe",
+  "इसे": "ise", "चाहिए": "chahiye", "चाहता": "chahta", "चाहती": "chahti", "रहा": "raha", "रही": "rahi", "रहे": "rahe", "करना": "karna", "करो": "karo", "कर": "kar", "करता": "karta",
+  "करती": "karti", "गया": "gaya", "गयी": "gayi", "गई": "gayi", "आया": "aaya", "आना": "aana", "जाना": "jaana", "दो": "do", "लो": "lo", "मदद": "madad", "अस्पताल": "aspataal",
+  "सबसे": "sabse", "पास": "paas", "कीमत": "keemat", "कितने": "kitne", "बजे": "baje", "समय": "samay", "नाम": "naam", "शुभ": "shubh", "रात्रि": "raatri", "सुप्रभात": "suprabhat"
+};
+
+function devanagariWordToRoman(word) {
+  const syl = [];
+  const chars = [...word.normalize("NFC")];
+  for (let i = 0; i < chars.length; i++) {
+    const ch = chars[i];
+    if (DEV_CONS[ch]) {
+      let c = DEV_CONS[ch];
+      if (chars[i + 1] === "़" && DEV_NUKTA[ch]) { c = DEV_CONS[DEV_NUKTA[ch]]; i++; }
+      syl.push({ c, v: "a", inherent: true, nasal: "", tail: "" });
+    } else if (ch === "़") { /* stray nukta */ }
+    else if (DEV_VOWEL[ch]) syl.push({ c: "", v: DEV_VOWEL[ch], inherent: false, nasal: "", tail: "" });
+    else if (DEV_MATRA[ch] && syl.length) { const l = syl[syl.length - 1]; l.v = DEV_MATRA[ch]; l.inherent = false; }
+    else if (ch === "्" && syl.length) { const l = syl[syl.length - 1]; l.v = ""; l.inherent = false; }
+    else if ((ch === "ं" || ch === "ँ") && syl.length) syl[syl.length - 1].nasal = "n";
+    else if (ch === "ः" && syl.length) syl[syl.length - 1].tail = "h";
+    else if (/[\u0966-\u096F]/.test(ch)) syl.push({ c: String(ch.charCodeAt(0) - 0x0966), v: "", inherent: false, nasal: "", tail: "" });
+  }
+  // schwa deletion: word-final, then medial (right → left)
+  if (syl.length > 1 && syl[syl.length - 1].inherent) syl[syl.length - 1].v = "";
+  for (let i = syl.length - 2; i >= 1; i--) {
+    if (syl[i].inherent && syl[i].v && syl[i + 1].v && syl[i - 1].v) syl[i].v = "";
+  }
+  return syl.map((x, i) => {
+    let v = x.v;
+    if (v === "A" || v === "I" || v === "U") {
+      const closed = !!x.nasal || (syl[i + 1] && syl[i + 1].v === "");
+      v = v === "A" ? (closed ? "aa" : "a") : v === "I" ? (closed ? "ee" : "i") : (closed ? "oo" : "u");
+    }
+    const nasal = x.nasal && syl[i + 1] && /^(p|ph|b|bh|m)/.test(syl[i + 1].c) ? "m" : x.nasal;
+    return x.c + v + nasal + x.tail;
+  }).join("");
+}
+
+function toHinglish(text) {
+  if (!text) return "";
+  const out = text.replace(/[\u0900-\u097F]+/g, seg => {
+    if (HINGLISH_WORDS[seg]) return HINGLISH_WORDS[seg];
+    return seg.split("।").map(devanagariWordToRoman).join(".");
+  }).replace(/।/g, ".");
+  // Capitalise the start of each sentence
+  return out.replace(/(^|[.!?]\s+|\n)([a-z])/g, (m, a, b) => a + b.toUpperCase());
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOOD DETECTION
+   Keyword + emoji based (English, Hinglish, Hindi, plus a few common
+   Spanish / French / German words). It's a quick guess, not AI.
+   ══════════════════════════════════════════════════════════════ */
+const MOODS = {
+  love:     { emoji: "❤️", label: "Love",     words: "love|loved|loving|adore|darling|sweetheart|babe|miss you|i miss|jaan|pyaar|pyar|ishq|mohabbat|miss kar|प्यार|इश्क़|मोहब्बत|जान|amor|te quiero|te amo|je t'aime|ich liebe dich|❤️|❤|💕|😍|😘|🥰|💖|💗|💓" },
+  grateful: { emoji: "🙏", label: "Grateful", words: "thank|thanks|thank you|thankful|grateful|appreciate|thx|tysm|shukriya|dhanyavad|dhanyavaad|dhanyawad|शुक्रिया|धन्यवाद|gracias|merci|danke|obrigado|obrigada|🙏" },
+  angry:    { emoji: "😠", label: "Angry",    words: "angry|mad|furious|hate|annoyed|annoying|stupid|idiot|damn|irritated|rage|disgusting|gussa|ghussa|naraz|bakwas|गुस्सा|नाराज़|नाराज|बकवास|enojado|wütend|en colère|😠|😡|🤬" },
+  sad:      { emoji: "😢", label: "Sad",      words: "sad|unhappy|sorry|cry|crying|cried|depressed|lonely|hurt|upset|disappointed|tears|sorrow|grief|heartbroken|udaas|udas|dukhi|dukh|rona|rota|rote|उदास|दुखी|दुख|रोना|triste|lo siento|traurig|😢|😭|😞|☹️|💔" },
+  worried:  { emoji: "😟", label: "Worried",  words: "worried|worry|afraid|scared|fear|nervous|anxious|danger|urgent|emergency|help|trouble|problem|fikar|chinta|darr|dar lag|pareshan|madad|चिंता|परेशान|डर|मदद|preocupado|ayuda|peur|angst|hilfe|😟|😰|😨|😥" },
+  surprised:{ emoji: "😮", label: "Surprised",words: "wow|surprised|shocked|unbelievable|omg|oh my god|oh my gosh|seriously|no way|arre|arey|sach mein|kya baat|हैरान|अरे|sorpresa|😮|😲|🤯|😱" },
+  excited:  { emoji: "🤩", label: "Excited",  words: "excited|thrilled|can't wait|cant wait|awesome|amazing|fantastic|incredible|yay|hurray|hooray|party|congratulations|congrats|celebrate|zabardast|kamaal|dhamaal|jhakaas|mubarak|बधाई|ज़बरदस्त|जबरदस्त|कमाल|मुबारक|emocionado|increíble|🎉|🤩|🥳|🔥|🎊" },
+  happy:    { emoji: "😊", label: "Happy",    words: "happy|glad|great|good|nice|wonderful|fun|smile|enjoy|enjoyed|pleased|delighted|cheerful|joy|lovely|khush|accha|acchi|badhiya|mast|maza|mazaa|majedar|खुश|अच्छा|अच्छी|बढ़िया|मज़ा|feliz|contento|genial|heureux|super|glücklich|toll|😊|😄|😁|🙂|😀|😃|😂|😆" },
+  friendly: { emoji: "👋", label: "Friendly", words: "hello|hi|hey|hi there|greetings|good morning|good afternoon|good evening|good night|welcome|namaste|kaise ho|kaisi ho|kaise hain|kya haal|how are you|buddy|bro|dost|hola|bonjour|hallo|नमस्ते|कैसे हो|कैसे हैं|क्या हाल|दोस्त|👋|🤝" },
+  curious:  { emoji: "🤔", label: "Curious",  words: "why|how|what|when|where|who|which|wonder|curious|kyun|kyu|kaise|kab|kahan|kaun|kitna|kitne|kya|क्यों|क्या|कैसे|कब|कहाँ|कहां|कौन|कितना|cómo|qué|por qué|pourquoi|comment|warum|wie|🤔|❓" }
+};
+// when two moods tie, the earlier one wins (Curious is the weakest signal)
+const MOOD_ORDER = ["love", "grateful", "angry", "sad", "worried", "surprised", "excited", "happy", "friendly", "curious"];
+const MOOD_RE = Object.fromEntries(MOOD_ORDER.map(k => [k,
+  new RegExp("(?<![\\p{L}\\p{N}\\p{M}])(?:" + MOODS[k].words.split("|").sort((a, b) => b.length - a.length).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")(?![\\p{L}\\p{N}\\p{M}])", "giu")]));
+
+function detectMood(text) {
+  const t = (text || "").trim();
+  if (t.length < 2) return null;
+  const score = {};
+  MOOD_ORDER.forEach(k => { score[k] = (t.match(MOOD_RE[k]) || []).length; });
+  if (/[?？]/.test(t) && !score.friendly) score.curious += 1;
+  if (/!{1,}/.test(t) && score.excited) score.excited += 1;
+  if (t.length > 8 && t === t.toUpperCase() && /[A-Z]{4}/.test(t) && score.angry) score.angry += 1;
+  let best = null;
+  MOOD_ORDER.forEach(k => { if (score[k] > 0 && (!best || score[k] > score[best])) best = k; });
+  if (!best) return null;
+  const n = score[best];
+  return { key: best, emoji: MOODS[best].emoji, label: MOODS[best].label, strength: n >= 3 ? "strong" : n === 2 ? "clear" : "mild" };
+}
+
+function paintMood(badge, mood) {
+  if (!mood) { badge.style.display = "none"; badge.dataset.mood = ""; return; }
+  const changed = badge.dataset.mood !== mood.key;
+  badge.dataset.mood = mood.key;
+  badge.innerHTML = `<span class="mood-emoji">${mood.emoji}</span> ${mood.label} <small>${mood.strength}</small>`;
+  badge.style.display = "inline-flex";
+  if (changed) { badge.classList.remove("mood-pop"); void badge.offsetWidth; badge.classList.add("mood-pop"); }
+}
+
+let moodTimer = null;
+function updateSourceMood() {
+  clearTimeout(moodTimer);
+  moodTimer = setTimeout(() => paintMood(els.emotionBadge, detectMood(els.sourceText.value)), 250);
 }
 
 /* ══════════════════════════════════════════════════════════════
